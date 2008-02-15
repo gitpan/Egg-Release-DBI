@@ -2,12 +2,12 @@ package Egg::Model::DBI;
 #
 # Masatoshi Mizuno E<lt>lusheE<64>cpan.orgE<gt>
 #
-# $Id: DBI.pm 241 2008-02-13 16:47:56Z lushe $
+# $Id: DBI.pm 258 2008-02-15 13:53:28Z lushe $
 #
 use strict;
 use warnings;
 
-our $VERSION= '3.00';
+our $VERSION= '3.01';
 
 sub _setup {
 	my($class, $e)= @_;
@@ -48,14 +48,14 @@ sub _setup {
 	$base->mk_classdata($_) for qw/ default labels mode /;
 	$class->_init($base);
 	my $labels= $base->labels($e->ixhash);
-	for (sort (grep /.+\.pm$/, <$path/*>)) {
+	for (sort (grep /.+\.pm$/, <$path/*>)) {  ## no critic.
 		m{([^\\\/\:]+)\.pm$} || next;
 		my $name = $1;
 		my $dc   = "${base}::$name";
 		$dc->require or die $@;
 		my $c= $dc->config || die __PACKAGE__. qq{ - '$dc' config is empty.};
 		my $label= lc( $c->{label_name} || "dbi::$name" );
-		$e->model_manager->add_register(1, $label, $dc);
+		$e->model_manager->add_register(0, $label, $dc);
 		$dc->mk_classdata('label_name');
 		$dc->label_name($label);
 		$class->_init_dbi(lc($name), $dc);

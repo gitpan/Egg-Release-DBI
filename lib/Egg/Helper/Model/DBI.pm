@@ -2,7 +2,7 @@ package Egg::Helper::Model::DBI;
 #
 # Masatoshi Mizuno E<lt>lusheE<64>cpan.orgE<gt>
 #
-# $Id: DBI.pm 241 2008-02-13 16:47:56Z lushe $
+# $Id: DBI.pm 258 2008-02-15 13:53:28Z lushe $
 #
 use strict;
 use warnings;
@@ -105,7 +105,7 @@ helper script.
 
 When all the options are specified, it becomes the following feeling.
 
-  % ./myapp_helper.pl Model::DBI \
+  % ./myapp_helper.pl Model::DBI MyComp \
   % -d dbi:Pg:dbname=dbfile \
   % -s localhost \
   % -i 5432 \

@@ -1,6 +1,6 @@
 ---
 name: Egg-Release-DBI
-version: 0.01
+version: 0.02
 author:
   - 'Masatoshi Mizuno E<lt>lusheE<64>cpan.orgE<gt>'
 abstract: lib/Egg/Release/DBI.pm
@@ -34,7 +34,7 @@ provides:
     file: lib/Egg/Mod/EasyDBI.pm
   Egg::Model::DBI:
     file: lib/Egg/Model/DBI.pm
-    version: 3.00
+    version: 3.01
   Egg::Model::DBI::Base:
     file: lib/Egg/Model/DBI/Base.pm
     version: 0.01
@@ -50,7 +50,7 @@ provides:
     file: lib/Egg/Plugin/EasyDBI.pm
   Egg::Release::DBI:
     file: lib/Egg/Release/DBI.pm
-    version: 0.01
+    version: 0.02
 generated_by: Module::Build version 0.2808
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html
