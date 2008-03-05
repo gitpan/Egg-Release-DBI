@@ -2,17 +2,20 @@ package Egg::Model::DBI::Base;
 #
 # Masatoshi Mizuno E<lt>lusheE<64>cpan.orgE<gt>
 #
-# $Id: Base.pm 233 2008-01-31 09:46:42Z lushe $
+# $Id: Base.pm 302 2008-03-05 07:45:10Z lushe $
 #
 use strict;
 use warnings;
 use base qw/ Egg::Model /;
 use Egg::Model::DBI::dbh;
 
-our $VERSION= '0.01';
+our $VERSION= '0.02';
 
 sub dbi {
-	$_[0]->{dbi} ||= $_[0]->e->model('dbi');
+	$_[0]->{dbi} ||= do {
+		my $e= $_[0]->e || return 0;
+		$e->model('dbi');
+	  };
 }
 sub dbh {
 	my($self)= @_;
@@ -34,7 +37,8 @@ sub connect {
 }
 sub disconnect {
 	my($self)= @_;
-	my $handlers= $self->dbi->handlers || return 0;
+	my $dbi= $self->dbi || return 0;
+	my $handlers= $dbi->handlers || return 0;
 	my $dbh= $handlers->{$self->label_name} || return 0;
 	$dbh->_disconnect || return 0;
 	delete $handlers->{$self->label_name};

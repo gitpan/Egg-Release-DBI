@@ -2,12 +2,12 @@ package Egg::Plugin::EasyDBI;
 #
 # Masatoshi Mizuno E<lt>lusheE<64>cpan.orgE<gt>
 #
-# $Id: EasyDBI.pm 233 2008-01-31 09:46:42Z lushe $
+# $Id: EasyDBI.pm 302 2008-03-05 07:45:10Z lushe $
 #
 use strict;
 use warnings;
 
-our $VERSION= '3.00';
+our $VERSION= '3.01';
 
 sub _setup {
 	my($e)= @_;
@@ -35,12 +35,12 @@ sub close_dbh {
 	$e;
 }
 sub _finish {
-	my $e= shift->next::method;
+	my($e)= shift->next::method;
 	$e->close_dbh(1);
 	$e;
 }
 sub _finalize_error {
-	my($e)= @_;
+	my($e)= shift->next::method;
 	$e->close_dbh(0);
 	$e;
 }
@@ -65,8 +65,9 @@ sub __setup {
 }
 sub new {
 	my($class, $e, $label)= @_;
+	$label= "dbi::$label" unless $e->is_model($label);
 	$class->SUPER::new
-	($e->model("dbi::$label")->dbh, $e->config->{plugin_easydbi});
+	($e->model($label)->dbh, $e->config->{plugin_easydbi});
 }
 
 1;
