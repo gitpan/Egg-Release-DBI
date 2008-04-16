@@ -2,12 +2,13 @@ package Egg::Plugin::EasyDBI;
 #
 # Masatoshi Mizuno E<lt>lusheE<64>cpan.orgE<gt>
 #
-# $Id: EasyDBI.pm 302 2008-03-05 07:45:10Z lushe $
+# $Id: EasyDBI.pm 312 2008-04-16 19:22:56Z lushe $
 #
 use strict;
 use warnings;
+use Time::Piece::MySQL;
 
-our $VERSION= '3.01';
+our $VERSION= '3.02';
 
 sub _setup {
 	my($e)= @_;
@@ -23,6 +24,11 @@ sub dbh {
 }
 sub db {
 	shift->dbh(@_)->db;
+}
+sub mysql_datetime {
+	my $self= shift;
+	my $Time= shift || time;
+	localtime($Time)->mysql_datetime
 }
 sub close_dbh {
 	my $e= shift;
@@ -182,6 +188,16 @@ When tables unite, it becomes the following.
   my $table= $e->db(qw/ hoge = hoge1:a.id=b.id /);
 
 see L<Egg::Mod::EasyDBI>.
+
+=head2 mysql_datetime ([TIME])
+
+The time value is received and the character string of the datetime type is 
+returned.
+
+When TIME is omitted, a present time value is used.
+
+  # It was timely the day before of the 30th.
+  my $datetime= $e->mysql_datetime( time- (30* 24* 60* 60) );
 
 =head2 close_dbh ([BOOL])
 

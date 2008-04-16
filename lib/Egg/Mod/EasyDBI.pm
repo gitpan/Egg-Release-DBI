@@ -2,14 +2,14 @@ package Egg::Mod::EasyDBI;
 #
 # Masatoshi Mizuno E<lt>lusheE<64>cpan.orgE<gt>
 #
-# $Id: EasyDBI.pm 233 2008-01-31 09:46:42Z lushe $
+# $Id: EasyDBI.pm 311 2008-04-16 19:11:05Z lushe $
 #
 use strict;
 use warnings;
 use base qw/ Class::Accessor::Fast Class::Data::Inheritable /;
 use Carp qw/croak/;
 
-our $VERSION= '3.00';
+our $VERSION= '3.05';
 our $AUTOLOAD;
 
 __PACKAGE__->mk_accessors(qw/
@@ -120,12 +120,12 @@ sub close {
 	my $dbh= $self->dbh || return 0;
 	unless ($dbh->{AutoCommit}) {
 		eval{
-			if ($self->rollback_ok) {
-				$dbh->rollback;
-				$self->debug(__PACKAGE__. ' : rollback.');
-			} else {
+			if ($self->commit_ok and ! $self->rollback_ok) {
 				$dbh->commit;
 				$self->debug(__PACKAGE__. ' : commit.');
+			} else {
+				$dbh->rollback;
+				$self->debug(__PACKAGE__. ' : rollback.');
 			}
 		  };
 		$@ and warn $@;
@@ -345,14 +345,13 @@ sub new {
 	my $count= 0;
 	my $from = shift(@$args). " $ixnames{$count++}";
 	my $alias= $es->alias;
-	tie my %db, 'Tie::Hash::Indexed';
-	%db= @$args;
-	while (my($key, $a)= each %db) {
-		$a=~s{^[(.+)]$} [$1];
+	while (1) {
+		my $uni= shift || last;
+		my $fro= shift || last;
 		my $i= $ixnames{$count++};
-		my($table, $on)= $a=~m{^(.+?)\s*\:\s*(.+)};
+		my($table, $on)= $fro=~m{^\s*(.+?)\s*\:\s*(.+)};
 		if (my $name= $alias->{$table}) { $table= $name }
-		my $j= $jkey{lc($key)} || croak q{ Format with bad argument. };
+		my $j= $jkey{lc $uni} || croak q{ Format with bad argument. };
 		$on=~s{\s*\=\s*} [ = ];
 		$from.= " $j $table $i ON $on";
 	}
@@ -361,13 +360,13 @@ sub new {
 sub hashref {
 	my $self= shift;
 	my $a= $argc->_hashref(@_);
-	$self->{es}->hashref
+	$self->[1]->hashref
 	("SELECT $a->{cols} FROM $self->[0] $a->{st}", $a->{ex});
 }
 sub arrayref {
 	my $self= shift;
 	my $a= $argc->_arrayref(@_);
-	$self->{es}->arrayref
+	$self->[1]->arrayref
 	("SELECT $a->{cols} FROM $self->[0] $a->{st}", $a->{ex}, $a->{cd});
 }
 *list= \&arrayref;
@@ -376,7 +375,7 @@ sub scalarref {
 	my $col = shift || croak q{ I want column. };
 	   $col = $$col if ref($col) eq 'SCALAR';
 	my $a= $argc->_scalarref(@_);
-	$self->{es}->scalarref
+	$self->[1]->scalarref
 	("SELECT $col FROM $self->[0] $a->{st}", $a->{ex});
 }
 sub scalar {
@@ -495,7 +494,7 @@ sub _get_up {
 					$up{"$key = ?"}= $v->[1];
 				}
 			} else {
-				$up{"$key = ?"}= undef;
+##				$up{"$key = ?"}= undef;
 			}
 		}
 	}

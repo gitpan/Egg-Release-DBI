@@ -12,6 +12,7 @@ requires 'DBI'                => '1.60';
 requires 'Ima::DBI'           => '0.35';
 requires 'UNIVERSAL::require' => '0.11';
 requires 'SQL::Abstract'      => '1.22';
+requires 'Time::Piece::MySQL' => '0.05';
 
 build_requires 'Test::More';
 build_requires 'Test::Pod';
