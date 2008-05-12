@@ -2,14 +2,14 @@ package Egg::Mod::EasyDBI;
 #
 # Masatoshi Mizuno E<lt>lusheE<64>cpan.orgE<gt>
 #
-# $Id: EasyDBI.pm 311 2008-04-16 19:11:05Z lushe $
+# $Id: EasyDBI.pm 335 2008-05-12 05:11:27Z lushe $
 #
 use strict;
 use warnings;
 use base qw/ Class::Accessor::Fast Class::Data::Inheritable /;
 use Carp qw/croak/;
 
-our $VERSION= '3.05';
+our $VERSION= '3.06';
 our $AUTOLOAD;
 
 __PACKAGE__->mk_accessors(qw/
@@ -417,14 +417,17 @@ sub _insert {
 	my %in;
 	while (my($key, $v)= each %$hash) {
 		next unless defined($v);
-		if (! ref($v)) {
-			$in{$key}= $v;
-		} elsif (ref($v) eq 'SCALAR') {
-##			$in{$key}= $$v;
-		} elsif (ref($v) eq 'ARRAY') {
-			next unless defined($v->[1]);
-			$in{$key}= ref($v->[1]) eq 'SCALAR' ? ${$v->[1]}: $v->[1];
+		if (my $type= ref($v)) {
+			if ($type eq 'ARRAY') {
+				next unless defined($v->[1]);
+				$in{$key}= ref($v->[1]) eq 'SCALAR' ? ${$v->[1]}: $v->[1];
+				next;
+			} elsif ($type eq 'SCALAR') {
+##				$in{$key}= $$v;
+				next;
+			}
 		}
+		$in{$key}= $v;
 	}
 	\%in;
 }

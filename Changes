@@ -1,5 +1,8 @@
 Revision history for Perl extension .
 
+0.05  2008/05/12
+	- fixed for Egg::Mod::EasyDBI.
+
 0.04  2008/03/15
 	- bugfix  for Egg::Plugin::EasyDBI
 	- bugfix  for Egg::Mod::EasyDBI.

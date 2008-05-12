@@ -2,12 +2,12 @@ package Egg::Release::DBI;
 #
 # Masatoshi Mizuno E<lt>lusheE<64>cpan.orgE<gt>
 #
-# $Id: DBI.pm 311 2008-04-16 19:11:05Z lushe $
+# $Id: DBI.pm 335 2008-05-12 05:11:27Z lushe $
 #
 use strict;
 use warnings;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 1;
 
