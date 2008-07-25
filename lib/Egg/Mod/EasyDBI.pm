@@ -2,14 +2,14 @@ package Egg::Mod::EasyDBI;
 #
 # Masatoshi Mizuno E<lt>lusheE<64>cpan.orgE<gt>
 #
-# $Id: EasyDBI.pm 335 2008-05-12 05:11:27Z lushe $
+# $Id: EasyDBI.pm 353 2008-07-25 01:25:46Z lushe $
 #
 use strict;
 use warnings;
 use base qw/ Class::Accessor::Fast Class::Data::Inheritable /;
 use Carp qw/croak/;
 
-our $VERSION= '3.06';
+our $VERSION= '3.08';
 our $AUTOLOAD;
 
 __PACKAGE__->mk_accessors(qw/
@@ -442,7 +442,8 @@ sub _update {
 			if (! ref($v)) {
 				push @ex, $v;
 			} elsif (ref($v) eq 'SCALAR') {
-				die qq{ '$_' is a scalar reference. };
+				push @ex, $v;
+#				die qq{ '$_' is a scalar reference. };
 			} elsif (defined($v->[0])) {
 				if (ref($v->[0]) eq 'ARRAY') {
 					my $N= $n{$_} || 0;
@@ -498,6 +499,7 @@ sub _get_up {
 				}
 			} else {
 ##				$up{"$key = ?"}= undef;
+warn __PACKAGE__. " : Reference not Sarported. [$key] => @{[ ref($v) ]}.";
 			}
 		}
 	}
